@@ -10,27 +10,52 @@
 
   <div class="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8 space-y-6">
     <h1 class="text-3xl font-bold text-center text-gray-800">🧠 HellNoAI</h1>
-    <p class="text-center text-sm text-gray-500">Paste some content. We'll tell you if it smells like ChatGPT and then roast it.</p>
+    <p class="text-center text-sm text-gray-500">Paste content, pick a mode, and get roasted (or gently critiqued).</p>
 
-    <form method="POST" class="space-y-4">
+    <form method="POST" class="space-y-4" onsubmit="return updateButtonLabel();">
       <textarea name="content" rows="8" placeholder="Paste your content here..." required
         class="w-full p-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
-      <button type="submit"
+
+      <select name="mode" id="mode-select" onchange="updateButtonLabel()"
+        class="w-full p-3 border border-gray-300 rounded-lg text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        <option value="detect-only">🔍 Simple: Detect Only</option>
+        <option value="nice">😇 Nice Mode</option>
+        <option value="savage">🔥 Savage Mode</option>
+      </select>
+
+      <button id="submit-btn" type="submit"
         class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-150">
-        Roast Me 🔥
+        Roast Me
       </button>
     </form>
 
     {% if roast %}
-    <div class="mt-6 p-5 bg-gray-50 border-l-4 border-red-500 rounded-lg shadow-inner">
+    <div class="mt-6 p-5 bg-gray-50 border-l-4 border-purple-500 rounded-lg shadow-inner">
       <pre class="whitespace-pre-wrap text-sm text-gray-800">{{ roast }}</pre>
     </div>
     {% endif %}
 
     <div class="text-center text-xs text-gray-400 pt-6 border-t">
-      Built by Angus MacDonald
+      Built in a weekend by someone with too much sarcasm and a Python install
     </div>
   </div>
+
+  <script>
+    function updateButtonLabel() {
+      const mode = document.getElementById("mode-select").value;
+      const btn = document.getElementById("submit-btn");
+      if (mode === "detect-only") {
+        btn.textContent = "Detect AI 🧠";
+      } else if (mode === "nice") {
+        btn.textContent = "Gently Roast Me 😇";
+      } else {
+        btn.textContent = "Roast Me 🔥";
+      }
+      return true;
+    }
+
+    window.onload = updateButtonLabel;
+  </script>
 
 </body>
 </html>

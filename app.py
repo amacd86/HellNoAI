@@ -5,42 +5,46 @@ import os
 
 print("Starting Flask app...")
 
-# Load environment variables from .env
 load_dotenv()
-
 app = Flask(__name__)
-
-# Initialize OpenAI client with secure API key
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-def get_ai_analysis_and_roast(text):
+def get_ai_analysis_and_roast(text, mode):
+    if mode == "detect-only":
+        instruction = "Only detect and report whether the text seems AI-generated. Do not include a roast."
+    elif mode == "nice":
+        instruction = "Gently roast this text with kindness. Be funny and clever, but constructive — like a cool teacher."
+    else:  # savage
+        instruction = "Roast this content with sharp wit, sarcasm, and a little dramatic flair. Be bold, but don't be mean-spirited."
+
     prompt = f"""
-You are a brutally honest but insightful writing coach and content analyst.
+You are an AI content detector and creative writing coach.
 
-You will:
-1. Analyze the text for signs of AI-generated patterns (buzzwords, vague language, repetitive structure).
-2. Judge the overall *vibe*: Is it robotic, overly formal, try-hard, or awkwardly human?
-3. Deliver a roast that’s funny, sharp, and a little dramatic — but feels like it came from a clever human, not a chatbot.
-4. Format your answer exactly like this:
+1. First, analyze whether this content sounds AI-generated or human.
+2. Check the tone: corporate buzzwords, robotic phrasing, or casual and real?
+3. Based on the selected mode, respond accordingly.
 
 ---
-**AI Detection:** [Likely AI / Likely Human / Unclear]
-**Tone Check:** [Boring corporate / Overly formal / Weirdly robotic / Kinda human / Try-hard / Casual and real]
-**Roast:** [Insert a witty, honest, slightly savage roast. No softballs.]
----
+**Mode:** {mode}
+**Instruction:** {instruction}
 
-Now roast this content:
+Now process this:
 
 \"\"\"{text}\"\"\"
+
+Respond in this format:
+---
+**AI Detection:** [Likely AI / Likely Human / Unclear]
+**Tone Check:** [Your tone check here]
+**Roast:** [Only if mode includes it]
+---
 """
 
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
-        messages=[
-            {"role": "user", "content": prompt}
-        ],
+        messages=[{"role": "user", "content": prompt}],
         max_tokens=300,
-        temperature=1.1
+        temperature=1.0 if mode == "savage" else 0.8
     )
 
     return response.choices[0].message.content.strip()
@@ -49,11 +53,11 @@ Now roast this content:
 def index():
     roast = ""
     if request.method == "POST":
-        content = request.form["content"].strip()  # Remove leading/trailing spaces
-        if content:  # Only call OpenAI if there's actual content
-            roast = get_ai_analysis_and_roast(content)
+        content = request.form["content"].strip()
+        mode = request.form.get("mode", "savage")
+        if content:
+            roast = get_ai_analysis_and_roast(content, mode)
     return render_template("index.html", roast=roast)
-
 
 if __name__ == "__main__":
     app.run(debug=True)
