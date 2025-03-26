@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HellNoAI</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-900 min-h-screen flex items-center justify-center px-4">
+
+  <div class="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8 space-y-6">
+    <h1 class="text-3xl font-bold text-center text-gray-800">🧠 HellNoAI</h1>
+    <p class="text-center text-sm text-gray-500">Paste some content. We'll tell you if it smells like ChatGPT and then roast it.</p>
+
+    <form method="POST" class="space-y-4">
+      <textarea name="content" rows="8" placeholder="Paste your content here..." required
+        class="w-full p-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+      <button type="submit"
+        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-150">
+        Roast Me 🔥
+      </button>
+    </form>
+
+    {% if roast %}
+    <div class="mt-6 p-5 bg-gray-50 border-l-4 border-red-500 rounded-lg shadow-inner">
+      <pre class="whitespace-pre-wrap text-sm text-gray-800">{{ roast }}</pre>
+    </div>
+    {% endif %}
+
+    <div class="text-center text-xs text-gray-400 pt-6 border-t">
+      Built by Angus MacDonald
+    </div>
+  </div>
+
+</body>
+</html>
